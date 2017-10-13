@@ -11,6 +11,9 @@ var Part = {
 }
 var mode = Part.EYES; // current mode
 
+const LEFT_EYE = -1;
+const RIGHT_EYE = 1;
+
 // Setup renderer
 var canvas = document.getElementById('canvas');
 var renderer = new THREE.WebGLRenderer();
@@ -153,8 +156,20 @@ new THREE.SourceLoader().load(noddingArmadilloShaderFiles, function(shaders) {
 })
 
 // EYES
-var leftEyeMaterial = new THREE.ShaderMaterial();
-var rightEyeMaterial = new THREE.ShaderMaterial();
+var leftEyeMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    eye: {type: 'f', value: LEFT_EYE},
+    lightPosition: lightPosition,
+    up: {type: 'v3', value: new THREE.Vector3(0,1,0)}
+  }
+});
+var rightEyeMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    eye: {type: 'f', value: RIGHT_EYE},
+    lightPosition: lightPosition,
+    up: {type: 'v3', value: new THREE.Vector3(0,1,0)}
+  }
+});
 eyeShaderFiles = [
   'glsl//eye.vs.glsl',
   'glsl//eye.fs.glsl'
@@ -239,31 +254,31 @@ function checkKeyboard() {
       mode = Part.DEFORM;
 
   if (mode == Part.EYES) {
-    if (keyboard.pressed("W"))
+    if (keyboard.pressed("S"))
       lightPosition.value.z -= 0.1;
-    else if (keyboard.pressed("S"))
+    else if (keyboard.pressed("W"))
       lightPosition.value.z += 0.1;
 
-    if (keyboard.pressed("A"))
+    if (keyboard.pressed("D"))
       lightPosition.value.x -= 0.1;
-    else if (keyboard.pressed("D"))
+    else if (keyboard.pressed("A"))
       lightPosition.value.x += 0.1;
 
       lightPosition.value = eyes.lightbulb.position;
-  } 
+  }
   else if (mode == Part.LASERS) {
-    if (keyboard.pressed("W"))
+    if (keyboard.pressed("S"))
       lightPosition.value.z -= 0.1;
-    else if (keyboard.pressed("S"))
+    else if (keyboard.pressed("W"))
       lightPosition.value.z += 0.1;
 
-    if (keyboard.pressed("A"))
+    if (keyboard.pressed("D"))
       lightPosition.value.x -= 0.1;
-    else if (keyboard.pressed("D"))
+    else if (keyboard.pressed("A"))
       lightPosition.value.x += 0.1;
 
     lightPosition.value = lasers.lightbulb.position;
-  } 
+  }
   else if (mode == Part.DEFORM) {
 
   }
