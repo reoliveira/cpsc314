@@ -1,5 +1,6 @@
 // Shared variable passed to the fragment shader
 varying vec3 color;
+uniform float headRotation;
 
 // Constant set via your javascript code
 uniform vec3 lightPosition;

@@ -139,7 +139,15 @@ var armadilloShaderFiles = [
 ]
 
 // (C) NODDING ARMADILLO
-var noddingArmadilloMaterial = new THREE.ShaderMaterial()
+var headRotation = {
+  type: 'f',
+  value: 0.0
+}
+var noddingArmadilloMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    headRotation : headRotation
+  }
+})
 var noddingArmadilloShaderFiles = [
   'glsl//nodding_armadillo.vs.glsl',
   'glsl//nodding_armadillo.fs.glsl'
@@ -227,11 +235,26 @@ lasers.lightbulb.scale.set(0.15, 0.15, 0.15);
 scenes[Part.LASERS].add(lasers.lightbulb);
 
 // Laser geometry
-var laserGeometry = new THREE.CylinderGeometry(0.02, 0.02, 2, 16);
+var laserLength = 2;
+var laserGeometry = new THREE.CylinderGeometry(0.02, 0.02, laserLength, 16);
 for (let i = 0; i < laserGeometry.vertices.length; ++i)
     laserGeometry.vertices[i].y += 1;
-var leftLaserMaterial = new THREE.ShaderMaterial();
-var rightLaserMaterial = new THREE.ShaderMaterial();
+var leftLaserMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    eye: l_eye,
+    lightPosition: lightPosition,
+    up: up,
+    laserLength: {type: 'f', value: laserLength}
+  }
+});
+var rightLaserMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    eye: r_eye,
+    lightPosition: lightPosition,
+    up: up,
+    laserLength: {type: 'f', value: laserLength}
+  }
+});
 laserShaderFiles = [
   'glsl//laser.vs.glsl',
   'glsl//laser.fs.glsl'
@@ -284,7 +307,7 @@ function checkKeyboard() {
     else if (keyboard.pressed("A"))
       lightPosition.value.x += 0.1;
 
-      lightPosition.value = eyes.lightbulb.position;
+    lightPosition.value = eyes.lightbulb.position;
   }
   else if (mode == Part.LASERS) {
     if (keyboard.pressed("S"))
@@ -300,6 +323,10 @@ function checkKeyboard() {
     lightPosition.value = lasers.lightbulb.position;
   }
   else if (mode == Part.DEFORM) {
+    if (keyboard.pressed("S"))
+      headRotation.value += 0.1;
+    else if (keyboard.pressed("W"))
+      headRotation.value -= 0.1;
 
   }
 
