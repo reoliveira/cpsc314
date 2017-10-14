@@ -1,6 +1,6 @@
 // Shared variable passed to the fragment shader
 varying vec3 color;
-uniform float eye;
+uniform vec3 eye;
 uniform vec3 lightPosition;
 uniform vec3 up;
 
@@ -31,15 +31,14 @@ void main() {
 
   mat4 adjust = rotate_z * rotate_x * scale;
 
-  vec3 eye_pos = vec3(eye * 0.13, 2.45, -0.65);
-  vec3 lookAt_z = normalize(eye_pos - lightPosition);
+  vec3 lookAt_z = normalize(eye - lightPosition);
   vec3 lookAt_x = normalize(cross(up, lookAt_z));
   vec3 lookAt_y = cross(lookAt_z, lookAt_x);
 
   mat4 lookAt = mat4(vec4(lookAt_x, 0.0),
                      vec4(lookAt_y, 0.0),
                      vec4(lookAt_z, 0.0),
-                     vec4(eye_pos, 1.0));
+                     vec4(eye, 1.0));
 
   // Multiply each vertex by the model-view matrix and the projection matrix to get final vertex position
   gl_Position = projectionMatrix * viewMatrix * lookAt * modelMatrix * adjust * vec4(position, 1.0);

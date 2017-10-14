@@ -155,19 +155,22 @@ new THREE.SourceLoader().load(noddingArmadilloShaderFiles, function(shaders) {
   noddingArmadilloMaterial.fragmentShader = shaders['glsl//nodding_armadillo.fs.glsl'];
 })
 
+var l_eye = {type: 'v3', value: new THREE.Vector3(LEFT_EYE * 0.13, 2.45, -0.65)}
+var r_eye = {type: 'v3', value: new THREE.Vector3(RIGHT_EYE * 0.13, 2.45, -0.65)}
+var up = {type: 'v3', value: new THREE.Vector3(0,1,0)}
 // EYES
 var leftEyeMaterial = new THREE.ShaderMaterial({
   uniforms: {
-    eye: {type: 'f', value: LEFT_EYE},
+    eye: l_eye,
     lightPosition: lightPosition,
-    up: {type: 'v3', value: new THREE.Vector3(0,1,0)}
+    up: up
   }
 });
 var rightEyeMaterial = new THREE.ShaderMaterial({
   uniforms: {
-    eye: {type: 'f', value: RIGHT_EYE},
+    eye: r_eye,
     lightPosition: lightPosition,
-    up: {type: 'v3', value: new THREE.Vector3(0,1,0)}
+    up: up
   }
 });
 eyeShaderFiles = [
@@ -227,6 +230,23 @@ scenes[Part.LASERS].add(lasers.lightbulb);
 var laserGeometry = new THREE.CylinderGeometry(0.02, 0.02, 2, 16);
 for (let i = 0; i < laserGeometry.vertices.length; ++i)
     laserGeometry.vertices[i].y += 1;
+var leftLaserMaterial = new THREE.ShaderMaterial();
+var rightLaserMaterial = new THREE.ShaderMaterial();
+laserShaderFiles = [
+  'glsl//laser.vs.glsl',
+  'glsl//laser.fs.glsl'
+]
+new THREE.SourceLoader().load(laserShaderFiles, function(shaders) {
+  leftLaserMaterial.vertexShader = shaders['glsl//laser.vs.glsl']
+  leftLaserMaterial.fragmentShader = shaders['glsl//laser.fs.glsl']
+
+  rightLaserMaterial.vertexShader = shaders['glsl//laser.vs.glsl']
+  rightLaserMaterial.fragmentShader = shaders['glsl//laser.fs.glsl']
+})
+var leftLaser = new THREE.Mesh(laserGeometry, leftLaserMaterial);
+var rightLaser = new THREE.Mesh(laserGeometry, rightLaserMaterial);
+scenes[Part.LASERS].add(leftLaser);
+scenes[Part.LASERS].add(rightLaser);
 
 // ADD YOUR OBJECTS HERE
 loadOBJ(Part.LASERS, 'obj/eye.obj', leftEyeMaterial, 0.5, 0, 0, 0, 0, 0, 0);
