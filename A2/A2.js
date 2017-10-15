@@ -323,9 +323,9 @@ function checkKeyboard() {
     lightPosition.value = lasers.lightbulb.position;
   }
   else if (mode == Part.DEFORM) {
-    if (keyboard.pressed("S"))
+    if (keyboard.pressed("W"))
       headRotation.value += 0.1;
-    else if (keyboard.pressed("W"))
+    else if (keyboard.pressed("S"))
       headRotation.value -= 0.1;
 
   }
