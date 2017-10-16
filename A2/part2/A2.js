@@ -143,9 +143,15 @@ var headRotation = {
   type: 'f',
   value: 0.0
 }
+var armRotation = {
+  type: 'f',
+  value: 0.0
+}
+var armRotation_dir = 1;
 var noddingArmadilloMaterial = new THREE.ShaderMaterial({
   uniforms: {
-    headRotation : headRotation
+    headRotation : headRotation,
+    armRotation: armRotation
   }
 })
 var noddingArmadilloShaderFiles = [
@@ -333,6 +339,10 @@ function checkKeyboard() {
     armadilloMaterial.needsUpdate = true;
     leftEyeMaterial.needsUpdate = true;
     rightEyeMaterial.needsUpdate = true;
+    armRotation.value += armRotation_dir * 0.05;
+    if(armRotation.value >= 1.0 || armRotation.value <= 0.0) {
+      armRotation_dir = -armRotation_dir;
+    }
 }
 
 // SETUP UPDATE CALL-BACK
