@@ -8,7 +8,7 @@ var Part = {
   LIGHTING: 0,
   ANISOTROPIC: 1,
   TOON: 2,
-  COUNT: 4
+  COUNT: 3
 }
 var mode = Part.LIGHTING// current mode
 
