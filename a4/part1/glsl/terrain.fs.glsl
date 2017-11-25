@@ -37,26 +37,48 @@ void main() {
 
 	// PRE-CALCS
 	vec3 N = normalize(Normal_V);
-	vec3 L = normalize(vec3(viewMatrix * vec4(lightDirectionUniform, 0.0)));
-	vec3 V = normalize(-Position_V);
+
+    // tangent space transformative matrix:
+    vec3 T = normalize(cross(N, vec3(0.0, 1.0, 0.0)));
+    vec3 B = normalize(cross(N, T));
+    mat3 TBN = mat3(T, B, N);
+
+	vec3 L_orig = normalize(vec3(viewMatrix * vec4(lightDirectionUniform, 0.0)));
+	vec3 V_orig = normalize(-Position_V);
+    // need TBN^-1 * [thing].
+    // "post-multiplying with column-major matrices produces the same result as pre-multiplying with row-major matrices"
+    // inverse(TBN) = transpose(TBN) b/c TBN is orthogonal
+    vec3 L = L_orig * TBN;
+    vec3 V = V_orig * TBN;
 	vec3 H = normalize(V + L);
 
 	// AMBIENT
-	vec3 light_AMB = ambientColorUniform * kAmbientUniform;
+	vec3 light_AMB = kAmbientUniform * texture2D(aoMap, Texcoord_V).xyz;
 
 	// DIFFUSE
-	vec3 diffuse = kDiffuseUniform * lightColorUniform;
-	vec3 light_DFF = diffuse * max(0.0, dot(N, L));
+	vec3 diffuse = kDiffuseUniform * texture2D(colorMap, Texcoord_V).xyz;
+	vec3 light_DFF = diffuse * max(0.0, dot(N_1, L));
 
 	// SPECULAR
 	vec3 specular = kSpecularUniform * lightColorUniform;
-	vec3 light_SPC = specular * pow(max(0.0, dot(H, N)), shininessUniform);
+	vec3 light_SPC = specular * pow(max(0.0, dot(H, N_1)), shininessUniform);
 
 	// TOTAL
-	vec3 TOTAL = light_AMB + light_DFF  + light_SPC;
+	vec3 TOTAL = light_AMB + light_DFF + light_SPC;
 
 	// SHADOW
 	// Fill in attenuation for shadow here
-	
+    float length_from_light = PositionFromLight_V.z;
+
+    float texture_x = PositionFromLight_V.x;
+    float texture_y = PositionFromLight_V.y;
+
+    float shadow_map_dist = getShadowMapDepth(vec2(texture_x+1.0, texture_y+1.0));
+
+    if(shadow_map_dist < length_from_light) {
+        float thing = texture_x + texture_y;
+        TOTAL = vec3(1.0, 0.0, 1.0);
+    }
+
 	gl_FragColor = vec4(TOTAL, 1.0);
 }

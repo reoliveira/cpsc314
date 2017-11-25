@@ -27,10 +27,10 @@ window.onscroll = function() {
   window.scrollTo(0, 0);
 }
 
-var depthScene = new THREE.Scene(); // shadowmap 
+var depthScene = new THREE.Scene(); // shadowmap
 var finalScene = new THREE.Scene(); // final result
 
-// Main camera 
+// Main camera
 var camera = new THREE.PerspectiveCamera(30, 1, 0.1, 1000); // view angle, aspect ratio, near, far
 camera.position.set(0,10,20);
 camera.lookAt(finalScene.position);
@@ -95,7 +95,7 @@ var shadowMapHeight = window.innerHeight
 // Texture/Render Target where the shadowmap will be written to
 var shadowMap = new THREE.WebGLRenderTarget(shadowMapWidth, shadowMapHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter } )
 
-// Loading the different textures 
+// Loading the different textures
 // Anisotropy allows the texture to be viewed 'decently' at different angles
 var colorMap = new THREE.TextureLoader().load('images/color.jpg')
 colorMap.anisotropy = renderer.getMaxAnisotropy()
@@ -129,6 +129,8 @@ var terrainMaterial = new THREE.ShaderMaterial({
     kDiffuseUniform: kDiffuseUniform,
     kSpecularUniform, kSpecularUniform,
     shininessUniform: shininessUniform,
+    lightViewMatrixUniform: lightViewMatrixUniform,
+    lightProjectMatrixUniform: lightProjectMatrixUniform,
     colorMap: { type: "t", value: colorMap },
     normalMap: { type: "t", value: normalMap },
     aoMap: { type: "t", value: aoMap },
@@ -170,7 +172,7 @@ var shaderFiles = [
   'glsl/depth.fs.glsl',
 
   'glsl/terrain.vs.glsl',
-  'glsl/terrain.fs.glsl',  
+  'glsl/terrain.fs.glsl',
 
   'glsl/bphong.vs.glsl',
   'glsl/bphong.fs.glsl',
@@ -183,10 +185,10 @@ new THREE.SourceLoader().load(shaderFiles, function(shaders) {
 	depthMaterial.vertexShader = shaders['glsl/depth.vs.glsl']
 	depthMaterial.fragmentShader = shaders['glsl/depth.fs.glsl']
 	terrainMaterial.vertexShader = shaders['glsl/terrain.vs.glsl']
-	terrainMaterial.fragmentShader = shaders['glsl/terrain.fs.glsl']	
+	terrainMaterial.fragmentShader = shaders['glsl/terrain.fs.glsl']
 	armadilloMaterial.vertexShader = shaders['glsl/bphong.vs.glsl']
 	armadilloMaterial.fragmentShader = shaders['glsl/bphong.fs.glsl']
-	skyboxMaterial.vertexShader = shaders['glsl/skybox.vs.glsl']	
+	skyboxMaterial.vertexShader = shaders['glsl/skybox.vs.glsl']
 	skyboxMaterial.fragmentShader = shaders['glsl/skybox.fs.glsl']
 })
 
@@ -231,6 +233,12 @@ var terrainDO = new THREE.Mesh(terrainGeometry, depthMaterial)
 terrainDO.rotation.set(-1.57, 0, 0)
 depthScene.add(terrainDO)
 
+var skyboxGeometry = new THREE.BoxGeometry(100, 100, 100, 1, 1, 1);
+var skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+finalScene.add(skybox)
+var skyboxDO = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+depthScene.add(skyboxDO);
+
 
 loadOBJ(finalScene, 'obj/armadillo.obj', armadilloMaterial, 1.0, 0, 1.0, 0, 0, 0, 0)
 loadOBJ(depthScene, 'obj/armadillo.obj', depthMaterial, 1.0, 0, 1.0, 0, 0, 0, 0)
@@ -267,7 +275,7 @@ function update() {
   // ------------------------------
   // UNCOMMENT ABOVE FOR VR CAMERA
 
-  // To see the shadowmap values: 
+  // To see the shadowmap values:
     // renderer.render(depthScene, lightCamera)
 }
 

@@ -13,7 +13,8 @@ uniform mat4 lightProjectMatrixUniform;
 void main() {
 	Normal_V = normalMatrix * normal;
 	Position_V = vec3(modelViewMatrix * vec4(position, 1.0));
+    PositionFromLight_V = lightProjectMatrixUniform * lightViewMatrixUniform * modelMatrix * vec4(position, 1.0);
 	Texcoord_V = uv;
-   
+
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
