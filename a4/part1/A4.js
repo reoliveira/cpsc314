@@ -233,7 +233,7 @@ var terrainDO = new THREE.Mesh(terrainGeometry, depthMaterial)
 terrainDO.rotation.set(-1.57, 0, 0)
 depthScene.add(terrainDO)
 
-var skyboxGeometry = new THREE.BoxGeometry(100, 100, 100, 1, 1, 1);
+var skyboxGeometry = new THREE.BoxGeometry(1000, 1000, 1000, 1, 1, 1);
 var skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
 finalScene.add(skybox)
 var skyboxDO = new THREE.Mesh(skyboxGeometry, skyboxMaterial);

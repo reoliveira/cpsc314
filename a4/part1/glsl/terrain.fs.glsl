@@ -68,16 +68,15 @@ void main() {
 
 	// SHADOW
 	// Fill in attenuation for shadow here
-    float length_from_light = PositionFromLight_V.z;
+    float length_from_light = ((PositionFromLight_V.z/PositionFromLight_V.w)+1.0)/2.0;
 
-    float texture_x = PositionFromLight_V.x;
-    float texture_y = PositionFromLight_V.y;
+    float texture_x = ((PositionFromLight_V.x/PositionFromLight_V.w)+1.0)/2.0;
+    float texture_y = ((PositionFromLight_V.y/PositionFromLight_V.w)+1.0)/2.0;
 
-    float shadow_map_dist = getShadowMapDepth(vec2(texture_x+1.0, texture_y+1.0));
+    float shadow_map_dist = getShadowMapDepth(vec2(texture_x, texture_y));
 
     if(shadow_map_dist < length_from_light) {
-        float thing = texture_x + texture_y;
-        TOTAL = vec3(1.0, 0.0, 1.0);
+        TOTAL = TOTAL - 0.3;
     }
 
 	gl_FragColor = vec4(TOTAL, 1.0);
