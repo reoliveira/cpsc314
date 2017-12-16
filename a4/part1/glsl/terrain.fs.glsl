@@ -32,7 +32,7 @@ float getShadowMapDepth(vec2 texCoord)
 }
 
 void main() {
-	// PART B) TANGENT SPACE NORMAL
+	// PART B) TANGENT SPACE NORMAL: we have to transform L, V, H to this same space to do calculations
 	vec3 N_1 = normalize(texture2D(normalMap, Texcoord_V).xyz * 2.0 - 1.0);
 
 	// PRE-CALCS
@@ -48,9 +48,9 @@ void main() {
     // need TBN^-1 * [thing].
     // "post-multiplying with column-major matrices produces the same result as pre-multiplying with row-major matrices"
     // inverse(TBN) = transpose(TBN) b/c TBN is orthogonal
-    vec3 L = L_orig * TBN;
-    vec3 V = V_orig * TBN;
-	vec3 H = normalize(V + L);
+    vec3 L = L_orig * TBN; // L in tangent space
+    vec3 V = V_orig * TBN; // V in tangent space
+	vec3 H = normalize(V + L); // H in tangent space
 
 	// AMBIENT
 	vec3 light_AMB = kAmbientUniform * texture2D(aoMap, Texcoord_V).xyz;
